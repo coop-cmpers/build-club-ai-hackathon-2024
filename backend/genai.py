@@ -12,7 +12,7 @@ class GenAI:
   ======
   """
 
-  def __init__(self, key: str):
+  def __init__(self, key: str) -> None:
     genai.configure(api_key=key)
     self.model = genai.GenerativeModel("gemini-1.5-flash")
 

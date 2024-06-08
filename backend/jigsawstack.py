@@ -1,7 +1,7 @@
 import requests
 
 class JigsawStack:
-  def __init__(self, key: str):
+  def __init__(self, key: str) -> None:
     self.jssHeaders = { "x-api-key": key }
     self.jssBaseURL = "https://api.jigsawstack.com"
 
@@ -57,11 +57,13 @@ class JigsawStack:
     allOpportunities.extend(self.scrapeGoVolunteer(location, keyword))
 
     print("=== Scraping volunteering opportunities from Seek Volunter ===")
-    allOpportunities.extend(self.scrapeSeekVolunteer(location, keyword, 1))
-    # page = 1
-    # while len(seekResults := scrapeSeekVolunteer(location, keyword, page)) > 0 and page <= 5:
-    #   allOpportunities.extend(seekResults)
-    #   print(page)
-    #   page += 1
+    # Seek returns multiple pages, and it is possible to iterate over them, but it takes too long, so limit to 1 page
+    allOpportunities.extend(self.scrapeSeekVolunteer(location, keyword, 1)) 
 
     return allOpportunities
+
+  def getOccupationSuggestions(self, keyword: str) -> list[str]:
+    params = { "search_value": keyword }
+    r = requests.get(f"{self.jssBaseURL}/v1/data/occupation", headers=self.jssHeaders, params=params)
+    occupations = r.json()["data"][:8] # return first 8 recommendations
+    return occupations
